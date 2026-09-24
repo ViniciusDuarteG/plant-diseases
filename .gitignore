@@ -1,0 +1,31 @@
+# Ambiente Python e caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Dados e artefatos de aprendizado de máquina
+/dataset/
+/models/
+/runs/
+/evaluations/
+/weights/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.cache
+
+# Pacotes para transferência ao Colab
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+
+# Configurações locais e credenciais
+.env
+.env.*
+!.env.example
+.DS_Store
