@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#214f3d">
+  <title>Plant Diseases AI · Um olhar para suas plantas</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#analise">Ir para análise</a>
+  <header class="header wrap">
+    <a class="brand" href="/" aria-label="Plant Diseases AI, início">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M25 6C12 4 5 11 8 19c8 6 17-1 17-13Z" stroke="currentColor" stroke-width="1.8"/><path d="m7 26 13-14M12 21v-7m4 3h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </span>
+      <span>plant<span class="brand-light"> / diseases ai</span></span>
+    </a>
+    <a class="nav-link" href="#como-funciona">Como funciona <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main class="wrap">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow"><span class="small-line"></span> VISÃO COMPUTACIONAL PARA PLANTAS</p>
+        <h1 id="page-title">Um novo olhar<br>para cada <em>folha.</em></h1>
+        <p class="intro-copy">Envie uma foto e explore o que o modelo reconhece sobre a planta e a condição de suas folhas.</p>
+      </div>
+      <div class="intro-note">
+        <span class="note-number">01 / OBSERVAR</span>
+        <p>Uma folha em foco.<br>Luz natural.<br>Um ponto de partida.</p>
+        <span class="note-caption">Análise experimental por imagem</span>
+      </div>
+    </section>
+
+    <section class="workspace" id="analise" aria-label="Analisar uma foto">
+      <div class="upload-panel panel">
+        <div class="panel-heading"><h2><span class="step">01</span> Sua imagem</h2><span class="small-text">JPG · PNG · WebP</span></div>
+        <form id="upload-form">
+          <label class="dropzone" id="dropzone" for="photo-input">
+            <input class="sr-only" id="photo-input" name="file" type="file" accept="image/jpeg,image/png,image/webp" aria-describedby="upload-hint">
+            <span id="upload-placeholder" class="upload-placeholder">
+              <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="7" y="9" width="34" height="30" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="17" cy="19" r="3" stroke="currentColor" stroke-width="1.5"/><path d="m9 34 11-10 8 7 5-5 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <strong>Traga sua folha para cá</strong>
+              <span>Arraste uma foto ou <span class="choose-text">escolha um arquivo</span></span>
+              <small id="upload-hint">Até 10 MB e 20 megapixels</small>
+            </span>
+            <img id="preview" class="preview" alt="Prévia da foto selecionada" hidden>
+            <span id="change-photo" class="change-photo" hidden>Clique para trocar a foto</span>
+          </label>
+          <div id="file-details" class="file-details" hidden><span id="file-name"></span><button id="remove-photo" class="text-button" type="button">Remover</button></div>
+          <p id="error" class="error" role="alert" hidden></p>
+          <button id="analyze-button" class="primary-button" type="submit" disabled><span id="button-label">Analisar foto</span><span id="button-arrow" aria-hidden="true">↗</span></button>
+          <p class="privacy-note">A foto não é guardada como histórico pela aplicação.</p>
+        </form>
+      </div>
+
+      <div class="result-panel panel" aria-live="polite" aria-busy="false" id="result-panel">
+        <div class="panel-heading"><h2><span class="step">02</span> O que a folha revela</h2></div>
+        <div id="result-placeholder" class="result-placeholder">
+          <div class="leaf-sketch" aria-hidden="true"><svg viewBox="0 0 160 180" fill="none"><path d="M124 22C48 15 13 63 46 117c56 23 104-17 78-95Z" stroke="currentColor" stroke-width="1.2"/><path d="M34 157 107 43M58 119l-8-47m27 18 42-15M74 93l-3-39m17 17 32-15M91 68l-2-25" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <h3>Uma foto, novas observações.</h3>
+          <p>Escolha uma imagem para ver a planta e a condição sugeridas pelo modelo.</p>
+        </div>
+        <div id="result" class="result" hidden>
+          <p class="eyebrow">SUGESTÃO DO MODELO</p>
+          <h3 id="plant-name"></h3>
+          <p id="condition-name" class="condition-name"></p>
+          <div class="confidence-heading"><span>Pontuação do modelo</span><strong id="confidence-value"></strong></div>
+          <div id="confidence-meter" class="confidence-meter" role="progressbar" aria-label="Pontuação da classe sugerida" aria-valuemin="0" aria-valuemax="100"><span id="confidence-fill"></span></div>
+          <p class="score-note">A pontuação compara as classes aprendidas; não é uma garantia de diagnóstico.</p>
+          <div class="alternatives"><h4>Outras possibilidades</h4><ul id="alternatives-list"></ul></div>
+        </div>
+        <div class="model-status"><span class="status-dot" id="status-dot"></span><span id="model-status-text">Verificando modelo…</span><button id="refresh-status" class="text-button" type="button">Verificar</button></div>
+        <p id="setup-note" class="setup-note" hidden>O modelo treinado precisa ser instalado antes de analisar uma foto. Veja a seção “Aplicação web” no README.</p>
+      </div>
+    </section>
+
+    <section class="guidance" id="como-funciona" aria-labelledby="guidance-title">
+      <div><p class="eyebrow">ANTES DO CLIQUE</p><h2 id="guidance-title">Uma boa foto faz diferença.</h2></div>
+      <div><span class="tip-number">01</span><h3>Aproxime a folha</h3><p>Fotografe uma folha por vez, com os detalhes visíveis e em foco.</p></div>
+      <div><span class="tip-number">02</span><h3>Procure luz natural</h3><p>Evite sombras fortes, reflexos e objetos cobrindo a planta.</p></div>
+      <div><span class="tip-number">03</span><h3>Considere o contexto</h3><p>O modelo compara 38 classes. Fotos de outras plantas ou objetos também podem receber uma classificação incorreta.</p></div>
+    </section>
+  </main>
+  <footer class="footer wrap"><span>Plant Diseases AI</span><span>Observar · aprender · cultivar</span></footer>
+</body>
+</html>

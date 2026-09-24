@@ -4,6 +4,59 @@ Classificação de imagens de plantas em 38 classes de espécie e condição
 (doença, praga ou planta saudável), usando `yolo26n-cls.pt` e Ultralytics.
 O modelo atribui uma classe à imagem inteira; não localiza lesões.
 
+## Aplicação web
+
+A página local permite enviar uma foto, visualizar a imagem e consultar a
+planta, a condição e as três classes mais pontuadas pelo modelo, em português.
+O treinamento continua no Colab; a aplicação usa o checkpoint baixado e
+executa a predição em CPU, sem depender de uma sessão do Colab.
+
+1. Baixe o `best.pt` da execução desejada no Drive e coloque em `models/best.pt`.
+2. Instale as dependências e inicie o servidor na raiz do projeto:
+
+```bash
+.venv/bin/python -m pip install -r requirements-web.txt
+.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8037
+```
+
+3. Abra **http://127.0.0.1:8037** e selecione uma imagem JPG, PNG ou WebP.
+
+A página abre mesmo sem o checkpoint e indica que o modelo está pendente.
+Depois de copiar o arquivo, clique em **Verificar**. A primeira análise
+carrega o modelo; as seguintes reutilizam o mesmo modelo em memória.
+Ao substituir um modelo já carregado, reinicie o servidor.
+
+Para usar outro arquivo, informe um caminho em `PLANT_MODEL_PATH`, por exemplo:
+
+```bash
+PLANT_MODEL_PATH=models/tomato-disease-v1.pt \
+  .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8037
+```
+
+A API aceita uma foto de até 10 MB e 20 megapixels. Ela verifica o conteúdo
+do arquivo, corrige a orientação EXIF e converte a imagem para RGB. Não há
+histórico de imagens: os dados são usados para a predição e não são mantidos
+pela aplicação. Uploads podem usar arquivos temporários do processamento HTTP.
+
+Essa primeira versão roda apenas no computador que iniciou o servidor. Ela
+não foi publicada como serviço online. O modelo sempre compara as classes
+aprendidas: a pontuação não é uma probabilidade calibrada de diagnóstico,
+e fotos fora do escopo ainda podem receber uma classe incorreta.
+
+Endpoints: `GET /api/status` e `POST /api/predict` (campo multipart `file`).
+A documentação interativa está em **http://127.0.0.1:8037/docs**.
+
+Testes da aplicação, sem precisar do checkpoint:
+
+```bash
+.venv/bin/python -m pip install httpx
+.venv/bin/python -m unittest discover -s tests -p 'test_*.py'
+```
+
+Os testes verificam uploads, limites, ausência e tipo do checkpoint, uso de CPU
+e formato dos resultados com um preditor simulado. A validação com o modelo
+real exige o `best.pt` do treinamento.
+
 ## Treinamento no Google Colab
 
 O fluxo está em [notebooks/treino_colab.ipynb](notebooks/treino_colab.ipynb).
@@ -106,7 +159,10 @@ Estrutura principal:
 training/prepare_dataset.py  # Preparação, deduplicação e divisão dos dados
 training/train.py            # Treino local curto (3 épocas)
 tests/predict_image.py       # Predição manual de uma imagem
-notebooks/treino_colab.ipynb # Treino e avaliação no Colab
+notebooks/treino_colab.ipynb  # Treino e avaliação no Colab
+app/main.py                 # API e servidor local da página
+app/static/                 # Página de upload e resultados
+tests/test_web.py           # Testes da aplicação web
 ```
 
 Para testar localmente com o script de predição atual, baixe o `best.pt` da
@@ -134,4 +190,5 @@ Drive. O notebook salvo aqui não inclui credenciais nem resultados de células.
 - Avaliar o `best.pt` no conjunto de teste reservado.
 - Registrar métricas e examinar a matriz de confusão por classe.
 - Verificar predições com fotos novas, fora do dataset.
-- Integrar o modelo à aplicação e tratar entradas fora do escopo.
+- Testar a aplicação web com o checkpoint treinado.
+- Desenvolver a rejeição de imagens fora do escopo do modelo.
