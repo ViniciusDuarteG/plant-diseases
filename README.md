@@ -4,6 +4,41 @@ Classificação de imagens de plantas em 38 classes de espécie e condição
 (doença, praga ou planta saudável), usando `yolo26n-cls.pt` e Ultralytics.
 O modelo atribui uma classe à imagem inteira; não localiza lesões.
 
+## Plantas e condições contempladas
+
+O dataset atual usado no treinamento contém **14 tipos de plantas e 38
+classes**. Cada classe combina uma planta com uma condição específica.
+A lista abaixo foi conferida nas pastas de `dataset/train`, com os nomes
+em português usados pela aplicação em `app/labels.py`.
+
+| Planta | Doenças ou pragas contempladas | Classe saudável | Total de classes |
+| --- | --- | --- | --- |
+| Abóbora | Oídio | Não | 1 |
+| Batata | Pinta-preta; requeima | Sim | 3 |
+| Cerejeira | Oídio | Sim | 2 |
+| Framboesa | Nenhuma; somente a classe saudável | Sim | 1 |
+| Laranjeira | Greening (HLB) | Não | 1 |
+| Macieira | Sarna da macieira; podridão negra; ferrugem da macieira | Sim | 4 |
+| Milho | Cercosporiose; ferrugem comum; helmintosporiose | Sim | 4 |
+| Mirtilo | Nenhuma; somente a classe saudável | Sim | 1 |
+| Morango | Queima das folhas | Sim | 2 |
+| Pessegueiro | Mancha bacteriana | Sim | 2 |
+| Pimentão | Mancha bacteriana | Sim | 2 |
+| Soja | Nenhuma; somente a classe saudável | Sim | 1 |
+| Tomateiro | Mancha bacteriana; pinta-preta; requeima; mofo das folhas; septoriose; ácaro-rajado; mancha-alvo; vírus do amarelecimento e enrolamento das folhas; vírus do mosaico do tomateiro | Sim | 10 |
+| Videira | Podridão negra; esca; mancha foliar de Isariopsis | Sim | 4 |
+| **Total** | | | **38** |
+
+Por exemplo, `tomato__early_blight` corresponde a **tomateiro com pinta-preta**,
+e `tomato__healthy` corresponde a **tomateiro saudável**.
+
+**Limites da cobertura:** mirtilo, framboesa e soja possuem apenas exemplos
+da classe saudável; o modelo não foi treinado para distinguir doenças nessas
+plantas. Abóbora e laranjeira não possuem uma classe saudável neste dataset.
+Outras plantas e condições não listadas estão fora do escopo. A aplicação
+ainda pode atribuir uma das 38 classes a essas imagens, pois não possui
+rejeição automática de entradas desconhecidas.
+
 ## Aplicação web
 
 A página local permite enviar uma foto, visualizar a imagem e consultar a
